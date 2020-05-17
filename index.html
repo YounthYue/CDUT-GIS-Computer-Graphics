@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>GC Work Result</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition; attribute vec2 vTexCoord; attribute vec4 vNormal; varying vec4 fColor; varying vec2 fTexCoord; uniform mat4 modelView; uniform mat4 projection; uniform vec4 ambientProduct, diffuseProduct, specularProduct; uniform vec4 lightPosition;
+        uniform float shininess; uniform mat4 rotationMatrix; uniform mat4 lRotationMatrix; uniform bool lFlag; uniform bool cflag; vec4 oPosition; void main() { if(cflag) oPosition = modelView *rotationMatrix * vPosition; else oPosition = modelView *
+        vPosition; vec3 L; if(lFlag) { if(lightPosition.w == 0.0) L = normalize((modelView * lRotationMatrix *lightPosition).xyz); else L = normalize( (modelView * lRotationMatrix *lightPosition - oPosition).xyz ); } else { if(lightPosition.w == 0.0)
+        L = normalize((modelView * lightPosition).xyz); else L = normalize( (modelView * lightPosition - oPosition).xyz ); } vec3 E = normalize( -oPosition.xyz ); vec3 H = normalize( L + E ); vec3 N = normalize( (modelView*vNormal).xyz); vec4 ambient
+        = ambientProduct; float Kd = max( dot(L, N), 0.0 ); vec4 diffuse = Kd*diffuseProduct; float Ks = pow( max(dot(N, H), 0.0), shininess ); vec4 specular = Ks * specularProduct; if( dot(L, N)
+        < 0.0 ) { specular=v ec4(0.0, 0.0, 0.0, 1.0); } if(cflag) gl_Position=p rojection * modelView * rotationMatrix * vPosition; else gl_Position=p rojection * modelView * vPosition; fColor=a mbient + diffuse + specular; fColor.a=1 .0; fTexCoord=v TexCoord;
+            } </script>
+
+            <script id="fragment-shader" type="x-shader/x-fragment">
+
+                precision mediump float; varying vec4 fColor; varying vec2 fTexCoord; uniform sampler2D texture; void main() { gl_FragColor = fColor * texture2D( texture, fTexCoord ); }
+            </script>
+
+            <script type="text/javascript" src="Common/webgl-utils.js"></script>
+            <script type="text/javascript" src="Common/initShaders.js"></script>
+            <script type="text/javascript" src="Common/MVnew.js"></script>
+            <script type="text/javascript" src="test.js"></script>
+</head>
+
+<body>
+    <canvas id="gl-canvas" width="512" height="512">
+            Oops ... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+    <p>你喜欢我吗？</p>
+    <button id="ButtonTurnPic">不喜欢，换一个！</button>
+    <button id="ButtonNotTurn">不换，不换。</button>
+    <p></p>
+    <p>可以多靠近我一点吗？</p>
+    <button id="ButtonNear">我来了！</button>
+    <button id="ButtonFar">远离它！</button>
+    <p>点击这里，可以换个角度看我哦！</p>
+    <button id="ButtonRightView">从右边看！</button>
+    <button id="ButtonLeftView">从左边看！</button>
+    <p></p>
+    <p></p>
+    <button id="ButtonUpView">从上边看！</button>
+    <button id="ButtonDownView">从下边看！</button>
+    <p></p>
+    <p></p>
+    <button id="ButtonResetView">视点回正！</button>
+    <p></p>
+    <p>我会转圈圈哦！</p>
+    <button id="ButtonX">绕x轴转！</button>
+    <button id="ButtonY">绕y轴转！</button>
+    <button id="ButtonZ">绕z轴转！</button>
+    <p></p>
+    <p></p>
+    <button id="ButtonQuickRotate">加速！</button>
+    <button id="ButtonSlowRotate">减速！</button>
+    <button id="ButtonResetSpeed">回到正常速度！</button>
+    <p></p>
+    <p></p>
+    <button id="ButtonStopRotateCube">停下来！</button>
+    <button id="ButtonResetCube">立正！</button>
+    <p></p>
+    <p>开灯吗？（要视点回正才能看到光线哦！）</p>
+    <button id="ButtonOnLight">开灯！</button>
+    <button id="ButtonOffLight">关灯！</button>
+    <p></p>
+    <p></p>
+    <button id="ButtonOnRotateLight">让灯转起来！</button>
+    <button id="ButtonOffRotateLight">别转啦！</button>
+    <p></p>
+</body>
+
+</html>
